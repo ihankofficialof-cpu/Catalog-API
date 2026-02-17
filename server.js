@@ -19,6 +19,7 @@ app.get("/catalog", async (req, res) => {
 
     const data = await response.json();
     res.json(data);
+
 });
 
 app.listen(10000, () => {
