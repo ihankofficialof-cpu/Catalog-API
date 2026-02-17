@@ -5,7 +5,18 @@ const app = express();
 app.use(cors());
 
 app.get("/catalog", async (req, res) => {
-    const response = await fetch("https://catalog.roblox.com/v1/search/items/details?Category=3&Limit=10");
+    const keyword = req.query.q;
+
+    if (!keyword) {
+        return res.json({ error: "Missing query" });
+    }
+
+    const encoded = encodeURIComponent(keyword);
+
+    const response = await fetch(
+        `https://catalog.roblox.com/v1/search/items/details?Keyword=${encoded}&Category=3&Limit=10`
+    );
+
     const data = await response.json();
     res.json(data);
 });
