@@ -1,27 +1,14 @@
-const express = require("express");
-const cors = require("cors");
-
-const app = express();
-app.use(cors());
-
 app.get("/catalog", async (req, res) => {
-    const keyword = req.query.q;
-
-    if (!keyword) {
-        return res.json({ error: "Missing query" });
-    }
-
-    const encoded = encodeURIComponent(keyword);
+    const query = req.query.q;
+    const cursor = req.query.cursor || "";
 
     const response = await fetch(
-        `https://catalog.roblox.com/v1/search/items/details?Keyword=${encoded}&Category=3&Limit=10`
+        `https://catalog.roblox.com/v1/search/items?category=All&limit=30&keyword=${encodeURIComponent(query)}&cursor=${cursor}`
     );
 
     const data = await response.json();
-    res.json(data);
 
-});
-
-app.listen(10000, () => {
-    console.log("Server running");
-});
+    res.json({
+        items: data.data,
+        nextCursor: data.nextPageCursor || null
+    });
